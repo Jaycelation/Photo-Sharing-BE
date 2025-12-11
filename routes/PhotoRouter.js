@@ -4,7 +4,7 @@ const Photo = require("../db/photoModel")
 const User = require("../db/userModel")
 const router = express.Router()
 
-// API 3: List photos of user by id
+// API 1: List photos of user by id
 router.get("/photosOfUser/:id", async (req, res) => {
   const userId = req.params.id
 

@@ -13,8 +13,10 @@
     "dotenv": "^17.2.3",
     "env": "^0.0.2",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "mongodb": "^6.21.0",
-    "mongoose": "^8.20.1"
+    "mongoose": "^8.20.1",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
