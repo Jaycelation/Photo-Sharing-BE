@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 const Photo = require("../db/photoModel")
 const User = require("../db/userModel")
 const router = express.Router()
+const multer = require("multer") //Import lib upload file
 
 // API 1: List photos of user by id
 router.get("/photosOfUser/:id", async (req, res) => {
@@ -52,6 +53,45 @@ router.get("/photosOfUser/:id", async (req, res) => {
     console.error("Error in /photosOfUser:", error)
     res.status(500).send({ message: "Server error", error })
   }
+})
+
+// API 2: Upload new photo
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'images/') 
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+})
+
+const upload = multer({ storage: storage })
+
+router.post("/photos/new", upload.single('file'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).send({ message: "No file uploaded" }) 
+    }
+
+    if (!req.session.user_id) {
+        return res.status(401).send({ message: "User not logged in" })
+    }
+
+    try {
+        const newPhoto = new Photo({
+            file_name: req.file.filename,
+            date_time: new Date(),
+            user_id: req.session.user_id,
+            comments: []
+        })
+
+        await newPhoto.save()
+
+        res.status(200).send(newPhoto)
+
+    } catch (error) {
+        console.error("Error uploading photo:", error)
+        res.status(500).send({ message: "Internal Server Error", error })
+    }
 })
 
 module.exports = router

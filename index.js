@@ -5,8 +5,9 @@ const dbConnect = require("./db/dbConnect")
 const UserRouter = require("./routes/UserRouter")
 const PhotoRouter = require("./routes/PhotoRouter")
 const LoginRegisterRouter = require("./routes/LoginRegisterRouter")
+const CommentRouter = require("./routes/CommentRouter")
 
-const session = require("express-session") // Add session in Final Lab
+const session = require("express-session")
 
 dbConnect()
 
@@ -17,25 +18,32 @@ app.use(session({
     cookie: { httpOnly: true }
 }))
 
-const isAuthenticated = (req, res, next) => {
-    const whiteList = ['/admin/login', '/admin/logout', '/user']
-
-    if (whiteList.includes(req.path) || req.method === 'POST' && req.path === '/user' || req.session.user_id) {
-        return next()
-    }
-    return res.status(401).send("Unauthorized")
-}
-
 app.use(cors({
     origin: "http://localhost:3000",
     credentials: true
 }))
 
 app.use(express.json())
+
+// Middleware & Authen
+const isAuthenticated = (req, res, next) => {
+    const whiteList = ['/admin/login', '/admin/logout', '/user'] 
+    if (whiteList.includes(req.path) || (req.method === 'POST' && req.path === '/user') || req.session.user_id) {
+        return next()
+    }
+    return res.status(401).send("Unauthorized")
+}
+
 app.use(isAuthenticated)
+
+
+app.use("/images", express.static("images")) 
+
 app.use("/admin", LoginRegisterRouter)
 app.use("/user", UserRouter)
-app.use("/", PhotoRouter)
+
+app.use("/comment", CommentRouter)
+app.use("/", PhotoRouter) 
 
 app.get("/", (request, response) => {
   response.send({ message: "Hello from photo-sharing app API!" })
