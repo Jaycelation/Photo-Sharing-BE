@@ -6,6 +6,7 @@ const UserRouter = require("./routes/UserRouter")
 const PhotoRouter = require("./routes/PhotoRouter")
 const LoginRegisterRouter = require("./routes/LoginRegisterRouter")
 const CommentRouter = require("./routes/CommentRouter")
+const isAuthenticated = require("./middleware/authMiddleware") 
 
 const session = require("express-session")
 
@@ -25,23 +26,12 @@ app.use(cors({
 
 app.use(express.json())
 
-// Middleware & Authen
-const isAuthenticated = (req, res, next) => {
-    const whiteList = ['/admin/login', '/admin/logout', '/user'] 
-    if (whiteList.includes(req.path) || (req.method === 'POST' && req.path === '/user') || req.session.user_id) {
-        return next()
-    }
-    return res.status(401).send("Unauthorized")
-}
-
-app.use(isAuthenticated)
-
+app.use(isAuthenticated) 
 
 app.use("/images", express.static("images")) 
 
 app.use("/admin", LoginRegisterRouter)
 app.use("/user", UserRouter)
-
 app.use("/comment", CommentRouter)
 app.use("/", PhotoRouter) 
 
@@ -50,5 +40,5 @@ app.get("/", (request, response) => {
 })
 
 app.listen(8081, () => {
-  console.log("server listening on port 8081")
+  console.log("Server listening on port 8081")
 })

@@ -2,7 +2,7 @@ const express = require("express")
 const User = require("../db/userModel")
 const router = express.Router()
 
-// API 1: Admin login
+// API 1: Login
 router.post("/login", async (req, res) => {
     const { login_name, password } = req.body
 
@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
 })
 
 
-// API 2: Admin logout
+// API 2: Logout
 router.post("/logout", (req, res) => {
     if (!req.session.user_id) {
         return res.status(400).send({ message: "User is not logged in"})
