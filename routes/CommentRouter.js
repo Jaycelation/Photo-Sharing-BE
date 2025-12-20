@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 const Photo = require("../db/photoModel")
 const router = express.Router()
 
+// API 1: Post new Comment
 router.post("/commentsOfPhoto/:photo_id", async (req, res) => {
     const userId = req.session.user_id
     
