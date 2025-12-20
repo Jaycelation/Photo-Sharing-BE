@@ -5,7 +5,6 @@ const router = express.Router()
 // API 1: Login
 router.post("/login", async (req, res) => {
     const { login_name, password } = req.body
-
     try {
         const user = await User.findOne({ login_name: login_name, password: password })
         if (!user) {
