@@ -16,7 +16,7 @@ router.get("/photosOfUser/:id", async (req, res) => {
         return res.status(400).json({ error: "Invalid User Id format" })
     }
     try {
-        const photos = await Photo.find({ user_id: userId })
+        const photos = await Photo.find({ user_id: userId }).sort({ date_time: -1 })
 
         const newPhotos = []
 
