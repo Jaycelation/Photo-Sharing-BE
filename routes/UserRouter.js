@@ -9,29 +9,7 @@ router.get("/list", async (req, res) => {
     try {
         const users = await User.find({}, "_id first_name last_name").lean()
         // console.log(users)
-        const photos = await Photo.find({}, "user_id comments").lean()
-
-        const usersWithCounts = users.map(user => {
-            const userId = user._id.toString()
-            const photoCount = photos.filter(p => p.user_id.toString() === userId).length
-            let commentCount = 0
-            photos.forEach(photo => {
-                if (photo.comments) {
-                    photo.comments.forEach(comment => {
-                        if (comment.user_id.toString() === userId) {
-                            commentCount++
-                        }
-                    })
-                }
-            })
-            return {
-                ...user,
-                photo_count: photoCount,
-                comment_count: commentCount
-            }
-        })
-        // res.status(200).json(users)
-        res.status(200).json(usersWithCounts)   //Extra credit
+        res.status(200).json(users)
     } catch (error) {
         console.error("Error in /list:", error)
         res.status(500).send({ message: "Internal server error", error })
