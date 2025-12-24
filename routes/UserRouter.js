@@ -98,4 +98,52 @@ router.post("/", async (req, res) => {
     }
 })
 
+// API 4: Edit Profile
+router.put("/:id", async (req, res) => {
+    const id = req.params.id
+
+    const { first_name, last_name, location, description, occupation } = req.body
+
+    try {
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        if (first_name) user.first_name = first_name
+        if (last_name) user.last_name = last_name
+        if (location) user.location = location
+        if (description) user.description = description
+        if (occupation) user.occupation = occupation
+
+        await user.save()
+
+        res.status(200).json(user)
+    } catch (err) {
+        res.status(500).json({ message: "Update failed", error: err })
+    }
+})
+
+// API 5: Search User
+router.post("/search", async (req, res) => {
+    const { searchText } = req.body
+
+    if (!searchText) return res.status(400).send("Search text required")
+
+    try {
+        const regex = new RegExp(searchText, "i")
+
+        const users = await User.find({
+            $or: [
+                { first_name: regex },
+                { last_name: regex }
+            ]
+        })
+
+        res.status(200).json(users)
+    } catch (err) {
+        res.status(500).send(err)
+    }
+})
+
 module.exports = router

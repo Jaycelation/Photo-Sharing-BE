@@ -38,4 +38,24 @@ router.post("/logout", (req, res) => {
     })
 })
 
+// API 3: Check session
+router.get("/me", async (req, res) => {
+    if (req.session.user_id) {
+        try {
+            const User = require("../db/userModel"); 
+            const user = await User.findById(req.session.user_id).select("_id first_name last_name occupation location description");
+            
+            if (!user) {
+                return res.status(401).send("User not found");
+            }
+            return res.status(200).json(user);
+
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    } else {
+        return res.status(401).send("Not logged in");
+    }
+});
+
 module.exports = router
